@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+
+set -e
+
+exec 3>&1 # make stdout available as fd 3 for the result
+exec 1>&2 # redirect all output to stderr for logging
+
+source=$1
+if [ -z "$source" ]; then
+  echo "usage: $0 <path/to/source>" >&2
+  exit 1
+fi
+
+payload=$(mktemp /tmp/artifactory-deb.XXXXXX)
+cat > $payload <&0
+
+verbose_option() {
+  local verbose=$1
+  if [ "$verbose" = "true" ]; then
+    echo "--verbose"
+  fi
+}
+
+project_option() {
+  local project=$(jq -r '.params.project // ""' < $payload)
+  if [ -n "$project" ]; then
+    echo "-p $project"
+  fi
+}
+
+command_arguments() {
+  local cmd=$1
+  case $cmd in
+  up)
+    echo "up $(up_command_options)"
+    ;;
+  down)
+    echo "down $(down_command_options)"
+    ;;
+  esac
+}
+
+up_command_opt_no_deps() {
+  local no_deps=$(jq -r '.params.options.no_deps // ""' < $payload)
+  if [ "$no_deps" = "true" ]; then
+    echo "--no-deps"
+  fi
+}
+
+up_command_opt_force_recreate() {
+  local force_recreate=$(jq -r '.params.options.force_recreate // ""' < $payload)
+  if [ "$force_recreate" = "true" ]; then
+    echo "--force-recreate"
+  fi
+}
+
+up_command_opt_no_recreate() {
+  local no_recreate=$(jq -r '.params.options.no_recreate // ""' < $payload)
+  if [ "$no_recreate" = "true" ]; then
+    echo "--no-recreate"
+  fi
+}
+
+up_command_renew_anon_volumes() {
+  local renew=$(jq -r '.params.options.renew_anon_volumes // ""' < $payload)
+  if [ "$renew" = "true" ]; then
+    echo "--renew-anon-volumes"
+  fi
+}
+
+command_opt_remove_orphans() {
+  local remove_orphans=$(jq -r ".params.options.remove_orphans // \"\"" < $payload)
+  if [ "$remove_orphans" = "true" ]; then
+    echo "--remove-orphans"
+  fi
+}
+
+up_command_scale() {
+  local scale=$(jq -r '.params.options.scale // {}' < $payload)
+  IFS=$'\n'
+  for entry in $(echo "$scale" | jq -r 'to_entries[] | [.key, .value] | @tsv'); do
+    local service=$(echo $entry | awk '{print $1}')
+    local val=$(echo $entry | awk '{print $2}')
+    echo -e "--scale $service=$val "
+  done
+  unset IFS
+}
+
+up_command_options() {
+  echo \
+    -d \
+    --no-build \
+    $(up_command_opt_no_deps) \
+    $(up_command_opt_force_recreate) \
+    $(up_command_opt_no_recreate) \
+    $(up_command_renew_anon_volumes) \
+    $(command_opt_remove_orphans) \
+    $(up_command_scale)
+}
+
+up_command_service_arguments() {
+  local cmd=$1
+  if [ "$cmd" = "up" ]; then
+    local services=$(jq -r '.params.services | join(" ")' < $payload)
+    echo $services
+  fi
+}
+
+down_command_rmi() {
+  local rmi=$(jq -r '.params.options.rmi // ""' < $payload)
+  if [ -n "$rmi" ]; then
+    echo "--rmi $rmi"
+  fi
+}
+
+down_command_volumes() {
+  local volumes=$(jq -r '.params.options.volumes // ""' < $payload)
+  if [ "$volumes" = "true" ]; then
+    echo "--volumes"
+  fi
+}
+
+down_command_options() {
+  echo \
+    $(down_command_rmi) \
+    $(down_command_volumes) \
+    $(command_opt_remove_orphans)
+}
+
+host=$(jq -r '.source.host // ""' < $payload)
+test -z "$host" && { echo '"source.host" must be defined' >&2; exit 1; }
+port=$(jq -r '.source.port // "2376"' < $payload)
+verbose=$(jq -r '.source.verbose // ""' < $payload)
+
+compose_file=$(jq -r '.params.compose_file // "docker-compose.yml"' < $payload)
+path=$(jq -r '.params.path // "."' < $payload)
+print=$(jq -r '.params.print // false' < $payload)
+wait_before=$(jq -r '.params.wait_before // ""' < $payload)
+wait_after=$(jq -r '.params.wait_after // ""' < $payload)
+command=$(jq -r '.params.command // "up"' < $payload)
+if [ "$command" != "up" ] && [ "$command" != "down" ]; then
+  echo "Unsupported command: $command" >&2
+  echo "Possible commands: down, up" >&2
+  exit 1
+fi
+
+cd $path
+
+docker-compose -v
+
+if [ "$print" = "true" ]; then
+  echo "${compose_file}:"
+  cat $compose_file
+fi
+
+if [ -n "$wait_before" ]; then
+  echo "Waiting $wait_before seconds..."
+  sleep $wait_before
+fi
+
+(
+  test "$verbose" = "true" && set -x || true
+  docker-compose \
+    --host $host:$port \
+    -f $compose_file \
+    $(verbose_option $verbose) \
+    $(project_option) \
+    $(command_arguments $command) \
+    $(up_command_service_arguments $command);
+)
+
+if [ -n "$wait_after" ]; then
+  echo "Waiting $wait_after seconds..."
+  sleep $wait_after
+fi
+
+printf '{"version":{}}' >&3
