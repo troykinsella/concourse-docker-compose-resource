@@ -133,10 +133,10 @@ log_into_registries() {
   for entry in $(echo "$registries" | jq -rc '.[]'); do
     local host=$(echo $entry | jq -r '.host // ""')
     local username=$(echo $entry | jq -r '.username // ""')
-    local password=$(echo $entry | jq -r '.username // ""')
+    local password=$(echo $entry | jq -r '.password // ""')
 
     echo "Logging into registry: $host"
-    docker login -u $username -p $password $host
+    echo $password | docker login -u $username --password-stdin $host
   done
   unset IFS
 }
