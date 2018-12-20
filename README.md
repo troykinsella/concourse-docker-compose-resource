@@ -115,3 +115,7 @@ jobs:
         options:
           volumes: true
 ```
+
+## License
+
+MIT © Troy Kinsella
