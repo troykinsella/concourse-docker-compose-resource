@@ -16,8 +16,26 @@ resource_types:
 
 ## Source Configuration
 
+* `ca_certs`: Optional. A list of objects having the following keys.
+  Configures CA certificates for docker registry domains.
+  * `domain`: The domain of the docker registry.
+  * `cert`: The CA certificate for the domain.
+
+  Each entry specifies the x509 CA certificate for the trusted docker registry 
+  residing at the specified domain. This is used to validate the certificate of 
+  the docker registry when the registry's certificate is signed by a custom 
+  authority (or itself).
+
+  The domain should match the first component of repository, including the port. 
+
 * `host`: Required. The hostname of the Docker host to connect to.
 * `port`: Optional. Default: 2376. The port on the Docker host to connect to.
+* `registries`: Optional. A list of objects having the following keys.
+  Performs a `docker login` to the listed registries in order to pull images from
+  private registries, for example. 
+  * `host`: 
+  * `username`:
+  * `password`:
 * `verbose`: Optional. Default: false. Enable verbose output from `docker-compose`.
 
 ### Example
@@ -28,6 +46,16 @@ resources:
   type: docker-compose
   source:
     host: docker-01.your.org
+    registries:
+    - host: docker-registry.your.org
+      username: you
+      password: 1nsecure
+    ca_certs:
+    - domain: docker-registry.your.org
+      cert: |
+        -----BEGIN CERTIFICATE-----
+        ...
+        -----END CERTIFICATE-----
 ```
 
 ## Behaviour
@@ -75,6 +103,7 @@ resources:
     in the Compose file.
 * `path`: Optional. The directory in which `docker-compose` will be executed.
 * `print`: Optional. Default: false. Print the contents of the Compose file.
+* `project`: Optional. Specify the project name, which is prepended to container names.
 * `services`: Optional. Only relevant to the `up` command. A list of services named in 
   the Compose file that `docker-compose` will being up.
 * `wait_before`: Optional. The number of seconds to wait (sleep) before executing `docker-compose`.

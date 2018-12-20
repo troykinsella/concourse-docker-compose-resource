@@ -127,6 +127,33 @@ down_command_options() {
     $(command_opt_remove_orphans)
 }
 
+log_into_registries() {
+  local registries=$(jq -r '.source.registries // []' < $payload)
+  IFS=$'\n'
+  for entry in $(echo "$registries" | jq -rc '.[]'); do
+    local host=$(echo $entry | jq -r '.host // ""')
+    local username=$(echo $entry | jq -r '.username // ""')
+    local password=$(echo $entry | jq -r '.username // ""')
+
+    echo "Logging into registry: $host"
+    docker login -u $username -p $password $host
+  done
+  unset IFS
+}
+
+# lifted from https://github.com/concourse/docker-image-resource/blob/master/assets/common.sh
+configure_ca_certs() {
+  local raw_ca_certs=$(jq -r '.source.ca_certs // []' < $payload)
+  local cert_count="$(echo $raw_ca_certs | jq -r '. | length')"
+
+  for i in $(seq 0 $(expr "$cert_count" - 1));
+  do
+    local cert_dir="/etc/docker/certs.d/$(echo $raw_ca_certs | jq -r .[$i].domain)"
+    mkdir -p "$cert_dir"
+    echo $raw_ca_certs | jq -r .[$i].cert >> "${cert_dir}/ca.crt"
+  done
+}
+
 host=$(jq -r '.source.host // ""' < $payload)
 test -z "$host" && { echo '"source.host" must be defined' >&2; exit 1; }
 port=$(jq -r '.source.port // "2376"' < $payload)
@@ -146,6 +173,9 @@ fi
 cd $source/$path
 
 docker-compose -v
+
+configure_ca_certs
+log_into_registries
 
 if [ "$print" = "true" ]; then
   echo "${compose_file}:"
