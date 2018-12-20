@@ -18,8 +18,7 @@ resource_types:
 
 * `host`: Required. The hostname of the Docker host to connect to.
 * `port`: Optional. Default: 2376. The port on the Docker host to connect to.
-* `verbose`: Optional. Default: false. Echo the `docker-compose` command, 
-   and enable verbose output from `docker-compose`.
+* `verbose`: Optional. Default: false. Enable verbose output from `docker-compose`.
 
 ### Example
 

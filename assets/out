@@ -15,7 +15,7 @@ payload=$(mktemp /tmp/artifactory-deb.XXXXXX)
 cat > $payload <&0
 
 verbose_option() {
-  local verbose=$1
+  local verbose=$(jq -r '.source.verbose // ""' < $payload)
   if [ "$verbose" = "true" ]; then
     echo "--verbose"
   fi
@@ -130,7 +130,6 @@ down_command_options() {
 host=$(jq -r '.source.host // ""' < $payload)
 test -z "$host" && { echo '"source.host" must be defined' >&2; exit 1; }
 port=$(jq -r '.source.port // "2376"' < $payload)
-verbose=$(jq -r '.source.verbose // ""' < $payload)
 
 compose_file=$(jq -r '.params.compose_file // "docker-compose.yml"' < $payload)
 path=$(jq -r '.params.path // "."' < $payload)
@@ -158,16 +157,13 @@ if [ -n "$wait_before" ]; then
   sleep $wait_before
 fi
 
-(
-  test "$verbose" = "true" && set -x || true
-  docker-compose \
-    --host $host:$port \
-    -f $compose_file \
-    $(verbose_option $verbose) \
-    $(project_option) \
-    $(command_arguments $command) \
-    $(up_command_service_arguments $command);
-)
+docker-compose \
+  --host $host:$port \
+  -f $compose_file \
+  $(verbose_option) \
+  $(project_option) \
+  $(command_arguments $command) \
+  $(up_command_service_arguments $command);
 
 if [ -n "$wait_after" ]; then
   echo "Waiting $wait_after seconds..."
