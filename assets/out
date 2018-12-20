@@ -144,7 +144,7 @@ if [ "$command" != "up" ] && [ "$command" != "down" ]; then
   exit 1
 fi
 
-cd $path
+cd $source/$path
 
 docker-compose -v
 
