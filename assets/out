@@ -30,14 +30,58 @@ project_option() {
 
 command_arguments() {
   local cmd=$1
-  case $cmd in
-  up)
-    echo "up $(up_command_options)"
-    ;;
-  down)
-    echo "down $(down_command_options)"
-    ;;
-  esac
+  echo "$cmd $(${cmd}_command_options)"
+}
+
+down_command_rmi() {
+  local rmi=$(jq -r '.params.options.rmi // ""' < $payload)
+  if [ -n "$rmi" ]; then
+    echo "--rmi $rmi"
+  fi
+}
+
+down_command_volumes() {
+  local volumes=$(jq -r '.params.options.volumes // ""' < $payload)
+  if [ "$volumes" = "true" ]; then
+    echo "--volumes"
+  fi
+}
+
+down_command_options() {
+  echo \
+    $(down_command_rmi) \
+    $(down_command_volumes) \
+    $(command_opt_remove_orphans) \
+    $(command_opt_timeout)
+}
+
+kill_command_opt_signal() {
+  local signal=$(jq -r '.params.options.signal // ""' < $payload)
+  if [ -n "$signal" ]; then
+    echo "-s $signal"
+  fi
+}
+
+kill_command_options() {
+  echo \
+    $(kill_command_opt_signal) \
+    $(service_arguments)
+}
+
+restart_command_options() {
+  echo \
+    $(command_opt_timeout) \
+    $(service_arguments)
+}
+
+start_command_options() {
+  service_arguments
+}
+
+stop_command_options() {
+  echo \
+    $(command_opt_timeout) \
+    $(service_arguments)
 }
 
 up_command_opt_no_deps() {
@@ -69,9 +113,16 @@ up_command_renew_anon_volumes() {
 }
 
 command_opt_remove_orphans() {
-  local remove_orphans=$(jq -r ".params.options.remove_orphans // \"\"" < $payload)
+  local remove_orphans=$(jq -r '.params.options.remove_orphans // ""' < $payload)
   if [ "$remove_orphans" = "true" ]; then
     echo "--remove-orphans"
+  fi
+}
+
+command_opt_timeout() {
+  local timeout=$(jq -r '.params.options.timeout // ""' < $payload)
+  if [ -n "$timeout" ]; then
+    echo "--timeout $timeout"
   fi
 }
 
@@ -95,36 +146,14 @@ up_command_options() {
     $(up_command_opt_no_recreate) \
     $(up_command_renew_anon_volumes) \
     $(command_opt_remove_orphans) \
-    $(up_command_scale)
+    $(up_command_scale) \
+    $(command_opt_timeout) \
+    $(service_arguments)
 }
 
-up_command_service_arguments() {
-  local cmd=$1
-  if [ "$cmd" = "up" ]; then
-    local services=$(jq -r '.params.services | join(" ")' < $payload)
-    echo $services
-  fi
-}
-
-down_command_rmi() {
-  local rmi=$(jq -r '.params.options.rmi // ""' < $payload)
-  if [ -n "$rmi" ]; then
-    echo "--rmi $rmi"
-  fi
-}
-
-down_command_volumes() {
-  local volumes=$(jq -r '.params.options.volumes // ""' < $payload)
-  if [ "$volumes" = "true" ]; then
-    echo "--volumes"
-  fi
-}
-
-down_command_options() {
-  echo \
-    $(down_command_rmi) \
-    $(down_command_volumes) \
-    $(command_opt_remove_orphans)
+service_arguments() {
+  local services=$(jq -r '.params.services | join(" ")' < $payload)
+  echo $services
 }
 
 log_into_registries() {
@@ -154,6 +183,22 @@ configure_ca_certs() {
   done
 }
 
+validate_command() {
+  local cmd=$1
+  case $cmd in
+  down) ;;
+  kill) ;;
+  restart) ;;
+  start) ;;
+  stop) ;;
+  up) ;;
+  *)
+    echo "Unsupported command: $cmd" >&2
+    echo "Possible commands: down, kill, restart, start, stop, up" >&2
+    exit 1
+  esac
+}
+
 host=$(jq -r '.source.host // ""' < $payload)
 test -z "$host" && { echo '"source.host" must be defined' >&2; exit 1; }
 port=$(jq -r '.source.port // "2376"' < $payload)
@@ -164,11 +209,7 @@ print=$(jq -r '.params.print // false' < $payload)
 wait_before=$(jq -r '.params.wait_before // ""' < $payload)
 wait_after=$(jq -r '.params.wait_after // ""' < $payload)
 command=$(jq -r '.params.command // "up"' < $payload)
-if [ "$command" != "up" ] && [ "$command" != "down" ]; then
-  echo "Unsupported command: $command" >&2
-  echo "Possible commands: down, up" >&2
-  exit 1
-fi
+validate_command $command
 
 cd $source/$path
 
@@ -192,8 +233,7 @@ docker-compose \
   -f $compose_file \
   $(verbose_option) \
   $(project_option) \
-  $(command_arguments $command) \
-  $(up_command_service_arguments $command);
+  $(command_arguments $command);
 
 if [ -n "$wait_after" ]; then
   echo "Waiting $wait_after seconds..."

@@ -69,43 +69,59 @@ resources:
 #### Parameters
 
 * `command`: Optional. Default: `up`. Specify the command to run with `docker-compose`.
-  Supported commands are: `up`, and `down`.
+  Supported commands are:
+  * `down`
+  * `kill`
+  * `restart`
+  * `start`
+  * `stop`
+  * `up`
 * `compose_file`: Optional. Default: `docker-compose.yml`. Specify the name of the Compose file,
   relative to `path`.
 * `options`: Optional. Supply command-specific options. Options names correlate to 
   `docker-compose` command options.
-  Supported options for `up`:
-  * `no_deps`: Boolean. Don't start linked services.
-  * `force_recreate`: Boolean. Recreate containers even if their configuration
-    and image haven't changed.
-  * `no_recreate`: Boolean. If containers already exist, don't recreate
-    them. Incompatible with `force_recreate` and `renew-anon-volumes`.
-  * `renew-anon-volumes`: Boolean. Recreate anonymous volumes instead of retrieving
-    data from the previous containers.
-  * `remove_orphans`: Boolean. Remove containers for services not defined
-    in the Compose file.
-  * `scale`: Object of service name keys to scale integer values. 
-     Scale SERVICE to NUM instances. Overrides the `scale` setting in the 
-     Compose file if present. For example:
-     * ```bash
-       scale:
-         service_a: 3
-         service_b: 1
-       ```
-  Supported options for `down`:
-  * `rmi`: String. Remove images. Type must be one of:
-    * `all`: Remove all images used by any service.
-    * `local`: Remove only images that don't have a
-      custom tag set by the `image` field.
-  * `volumes`: Boolean. Remove named volumes declared in the `volumes`
-    section of the Compose file and anonymous volumes attached to containers.
-  * `remove_orphans`: Boolean. Remove containers for services not defined
-    in the Compose file.
+  * `down` options:
+    * `rmi`: String. Remove images. Type must be one of:
+      * `all`: Remove all images used by any service.
+      * `local`: Remove only images that don't have a
+        custom tag set by the `image` field.
+    * `volumes`: Boolean. Remove named volumes declared in the `volumes`
+      section of the Compose file and anonymous volumes attached to containers.
+    * `remove_orphans`: Boolean. Remove containers for services not defined
+      in the Compose file.
+    * `timeout`: Specify a shutdown timeout in seconds.
+  * `kill` options:
+    * `signal`: SIGNAL to send to the container.
+  * `restart` options:
+    * `timeout`: Specify a shutdown timeout in seconds.
+  * `start` options: (none)
+  * `stop` options:
+    * `timeout`: Specify a shutdown timeout in seconds.
+  * `up` options:
+    * `no_deps`: Boolean. Don't start linked services.
+    * `force_recreate`: Boolean. Recreate containers even if their configuration
+      and image haven't changed.
+    * `no_recreate`: Boolean. If containers already exist, don't recreate
+      them. Incompatible with `force_recreate` and `renew-anon-volumes`.
+    * `renew-anon-volumes`: Boolean. Recreate anonymous volumes instead of retrieving
+      data from the previous containers.
+    * `remove_orphans`: Boolean. Remove containers for services not defined
+      in the Compose file.
+    * `scale`: Object of service name keys to scale integer values. 
+       Scale SERVICE to NUM instances. Overrides the `scale` setting in the 
+       Compose file if present. For example:
+       * ```bash
+         scale:
+           service_a: 3
+           service_b: 1
+         ```
+     * `timeout`: Use this timeout in seconds for container shutdown when attached or when 
+       containers are already running.
 * `path`: Optional. The directory in which `docker-compose` will be executed.
 * `print`: Optional. Default: false. Print the contents of the Compose file.
 * `project`: Optional. Specify the project name, which is prepended to container names.
-* `services`: Optional. Only relevant to the `up` command. A list of services named in 
-  the Compose file that `docker-compose` will being up.
+* `services`: Optional. Only relevant to the `kill`, `restart`, `start`, `stop`, and `up` commands. 
+  A list of services named in the Compose file on which `docker-compose` will operate.
 * `wait_before`: Optional. The number of seconds to wait (sleep) before executing `docker-compose`.
 * `wait_after`: Optional. The number of seconds to wait (sleep) after executing `docker-compose`.
 

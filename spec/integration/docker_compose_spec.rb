@@ -44,7 +44,370 @@ describe "integration:docker-compose" do
     stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
 
     expect(status.success?).to be false
-    expect(stderr).to eq "Unsupported command: nope\nPossible commands: down, up\n"
+    expect(stderr).to eq "Unsupported command: nope\nPossible commands: down, kill, restart, start, stop, up\n"
+  end
+
+
+  describe "down" do
+
+    it "generates default arguments" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "down"
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "down"
+                                                            ]
+    end
+
+    it "generates options" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "down",
+              "options" => {
+                  "rmi" => "local",
+                  "volumes" => true,
+                  "remove_orphans" => true,
+                  "timeout" => 123
+              }
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "down",
+                                                                "--rmi",
+                                                                "local",
+                                                                "--volumes",
+                                                                "--remove-orphans",
+                                                                "--timeout",
+                                                                "123"
+                                                            ]
+    end
+
+    it "ignores services" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "down",
+              "services" => [
+                  "service_a",
+                  "service_b"
+              ]
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "down"
+                                                            ]
+    end
+
+  end
+
+
+
+  describe "kill" do
+
+    it "generates default arguments" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "kill"
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "kill"
+                                                            ]
+    end
+
+    it "generates options" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "kill",
+              "options" => {
+                  "signal" => 123
+              }
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "kill",
+                                                                "-s",
+                                                                "123"
+                                                            ]
+    end
+
+    it "supplies services" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "kill",
+              "services" => [
+                  "service_a",
+                  "service_b"
+              ]
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "kill",
+                                                                "service_a",
+                                                                "service_b"
+                                                            ]
+    end
+
+  end
+
+
+  describe "start" do
+
+    it "generates default arguments" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "start"
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "start"
+                                                            ]
+    end
+
+    it "supplies services" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "start",
+              "services" => [
+                  "service_a",
+                  "service_b"
+              ]
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "start",
+                                                                "service_a",
+                                                                "service_b"
+                                                            ]
+    end
+
+  end
+
+
+
+  describe "stop" do
+
+    it "generates default arguments" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "stop"
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "stop"
+                                                            ]
+    end
+
+    it "generates options" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "stop",
+              "options" => {
+                  "timeout" => 123
+              }
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "stop",
+                                                                "--timeout",
+                                                                "123"
+                                                            ]
+    end
+
+    it "supplies services" do
+      stdin = {
+          "source" => {
+              "host" => "foo"
+          },
+          "params" => {
+              "command" => "stop",
+              "services" => [
+                  "service_a",
+                  "service_b"
+              ]
+          }
+      }.to_json
+
+      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+      expect(status.success?).to be true
+
+      out = JSON.parse(File.read(mockelton_out))
+
+      expect(out["sequence"].size).to be 2
+      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
+                                                                "docker-compose",
+                                                                "--host",
+                                                                "foo:2376",
+                                                                "-f",
+                                                                "docker-compose.yml",
+                                                                "stop",
+                                                                "service_a",
+                                                                "service_b"
+                                                            ]
+    end
+
   end
 
   describe "up" do
@@ -116,6 +479,7 @@ describe "integration:docker-compose" do
                   "no_recreate" => true,
                   "renew_anon_volumes" => true,
                   "remove_orphans" => true,
+                  "timeout" => 123,
                   "scale" => {
                       "service_a" => 3,
                       "service_b" => 4
@@ -148,7 +512,9 @@ describe "integration:docker-compose" do
                                                                 "--scale",
                                                                 "service_a=3",
                                                                 "--scale",
-                                                                "service_b=4"
+                                                                "service_b=4",
+                                                                "--timeout",
+                                                                "123"
                                                             ]
     end
 
@@ -187,107 +553,6 @@ describe "integration:docker-compose" do
                                                             ]
     end
 
-
   end
-
-
-  describe "down" do
-
-    it "generates default arguments" do
-      stdin = {
-          "source" => {
-              "host" => "foo"
-          },
-          "params" => {
-              "command" => "down"
-          }
-      }.to_json
-
-      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
-
-      expect(status.success?).to be true
-
-      out = JSON.parse(File.read(mockelton_out))
-
-      expect(out["sequence"].size).to be 2
-      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker-compose",
-                                                                "--host",
-                                                                "foo:2376",
-                                                                "-f",
-                                                                "docker-compose.yml",
-                                                                "down"
-                                                            ]
-    end
-
-    it "generates options" do
-      stdin = {
-          "source" => {
-              "host" => "foo"
-          },
-          "params" => {
-              "command" => "down",
-              "options" => {
-                  "rmi" => "local",
-                  "volumes" => true,
-                  "remove_orphans" => true
-              }
-          }
-      }.to_json
-
-      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
-
-      expect(status.success?).to be true
-
-      out = JSON.parse(File.read(mockelton_out))
-
-      expect(out["sequence"].size).to be 2
-      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker-compose",
-                                                                "--host",
-                                                                "foo:2376",
-                                                                "-f",
-                                                                "docker-compose.yml",
-                                                                "down",
-                                                                "--rmi",
-                                                                "local",
-                                                                "--volumes",
-                                                                "--remove-orphans"
-                                                            ]
-    end
-
-    it "ignores services" do
-      stdin = {
-          "source" => {
-              "host" => "foo"
-          },
-          "params" => {
-              "command" => "down",
-              "services" => [
-                  "service_a",
-                  "service_b"
-              ]
-          }
-      }.to_json
-
-      stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
-
-      expect(status.success?).to be true
-
-      out = JSON.parse(File.read(mockelton_out))
-
-      expect(out["sequence"].size).to be 2
-      expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker-compose",
-                                                                "--host",
-                                                                "foo:2376",
-                                                                "-f",
-                                                                "docker-compose.yml",
-                                                                "down"
-                                                            ]
-    end
-
-  end
-
 
 end
