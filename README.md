@@ -120,6 +120,7 @@ resources:
 * `path`: Optional. The directory in which `docker-compose` will be executed.
 * `print`: Optional. Default: false. Print the contents of the Compose file.
 * `project`: Optional. Specify the project name, which is prepended to container names.
+* `pull`: Optional. Default: false. Run `docker-compose pull` prior to executing the `command`.
 * `services`: Optional. Only relevant to the `kill`, `restart`, `start`, `stop`, and `up` commands. 
   A list of services named in the Compose file on which `docker-compose` will operate.
 * `wait_before`: Optional. The number of seconds to wait (sleep) before executing `docker-compose`.

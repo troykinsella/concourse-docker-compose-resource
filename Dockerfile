@@ -1,7 +1,7 @@
 FROM ubuntu:bionic as main
 LABEL maintainer="Troy Kinsella <troy.kinsella@gmail.com>"
 
-ADD https://github.com/docker/compose/releases/download/1.23.1/docker-compose-linux-x86_64 /usr/local/bin/docker-compose
+ADD https://github.com/docker/compose/releases/download/1.24.0/docker-compose-linux-x86_64 /usr/local/bin/docker-compose
 
 RUN set -eux; \
     chmod +x /usr/local/bin/docker-compose; \
