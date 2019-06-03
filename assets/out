@@ -230,7 +230,11 @@ if [ -n "$wait_before" ]; then
 fi
 
 if [ "$pull" == "true" ]; then
-  docker-compose pull --include-deps
+  docker-compose \
+    --host $host:$port \
+    -f $compose_file \
+    pull \
+    --include-deps
 fi
 
 docker-compose \
