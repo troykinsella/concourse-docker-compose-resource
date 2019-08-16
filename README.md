@@ -78,6 +78,10 @@ resources:
   * `up`
 * `compose_file`: Optional. Default: `docker-compose.yml`. Specify the name of the Compose file,
   relative to `path`.
+* `env`: Optional. Mutually exclusive with `env_file`. A map of key-value pairs which will be made available to the
+  `docker-compose` execution as environment variables.
+* `env_file`: Optional. Mutually exclusive with `env`. A path to a file containing environment variables 
+  which will be made available to the `docker-compose` execution.
 * `options`: Optional. Supply command-specific options. Options names correlate to 
   `docker-compose` command options.
   * `down` options:
