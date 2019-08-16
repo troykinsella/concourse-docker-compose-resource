@@ -183,6 +183,25 @@ configure_ca_certs() {
   done
 }
 
+write_env_file() {
+  local env_entries=$(jq -r '.params.env // ""' < $payload)
+  local env_file=$(jq -r '.params.env_file // ""' < $payload)
+
+  if [ -n "$env_entries" ]; then
+    echo -n '' > .env
+
+    IFS=$'\n'
+    for entry in $(echo "$env_entries" | jq -r 'to_entries[] | [.key, .value] | @tsv'); do
+      local key=$(echo $entry | awk '{print $1}')
+      local val=$(echo $entry | awk '{print $2}')
+      echo "$key=$val" >> .env
+    done
+    unset IFS
+  elif [ -n "$env_file" ]; then
+    cp $source/$env_file .env
+  fi
+}
+
 validate_command() {
   local cmd=$1
   case $cmd in
@@ -218,6 +237,7 @@ docker-compose -v
 
 configure_ca_certs
 log_into_registries
+write_env_file
 
 if [ "$print" = "true" ]; then
   echo "${compose_file}:"

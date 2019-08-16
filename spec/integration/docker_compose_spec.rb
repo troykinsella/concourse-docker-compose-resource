@@ -47,6 +47,69 @@ describe "integration:docker-compose" do
     expect(stderr).to eq "Unsupported command: nope\nPossible commands: down, kill, restart, start, stop, up\n"
   end
 
+  it "writes .env file from values" do
+    stdin = {
+        "source" => {
+            "host" => "foo"
+        },
+        "params" => {
+            "command" => "down",
+            "env" => {
+                "FOO" => "BAR",
+                "BAR" => "BAZ"
+            }
+        }
+    }.to_json
+
+    stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+    expect(status.success?).to be true
+
+    out = File.read(".env")
+
+    expect(out).to eq "FOO=BAR\nBAR=BAZ\n"
+  end
+
+  it "copies .env file from file path" do
+    stdin = {
+        "source" => {
+            "host" => "foo"
+        },
+        "params" => {
+            "command" => "down",
+            "env_file" => "my_env"
+        }
+    }.to_json
+
+    File.open("my_env", "w") do |file|
+      file.puts "FOO=BAR\nBAR=BAZ\nBAZ=BIZ\n"
+    end
+
+    stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+    expect(status.success?).to be true
+
+    out = File.read(".env")
+
+    expect(out).to eq "FOO=BAR\nBAR=BAZ\nBAZ=BIZ\n"
+  end
+
+  it "does not create .env file unless configured" do
+    stdin = {
+        "source" => {
+            "host" => "foo"
+        },
+        "params" => {
+            "command" => "down"
+        }
+    }.to_json
+
+    stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+    expect(status.success?).to be true
+
+    expect(File.exist?(".env")).to be true
+  end
 
   describe "down" do
 
