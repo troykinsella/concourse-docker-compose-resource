@@ -152,7 +152,7 @@ up_command_options() {
 }
 
 service_arguments() {
-  local services=$(jq -r '.params.services | join(" ")' < $payload)
+  local services=$(jq -r '.params.services // [] | join(" ")' < $payload)
   echo $services
 }
 
