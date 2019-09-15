@@ -132,6 +132,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -165,6 +166,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -202,6 +204,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -235,6 +238,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -265,6 +269,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -298,6 +303,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -332,6 +338,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -363,6 +370,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -398,6 +406,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -428,6 +437,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -461,6 +471,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -491,6 +502,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -520,6 +532,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -560,6 +573,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
@@ -604,6 +618,7 @@ describe "integration:docker-compose" do
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
+                                                                "--no-ansi",
                                                                 "--host",
                                                                 "foo:2376",
                                                                 "-f",
