@@ -13,7 +13,7 @@ FROM main as testing
 
 RUN set -eux \
  && apk update \
- && apk ruby wget \
+ && apk add ruby wget \
  && gem install rspec \
  && wget -q -O - https://raw.githubusercontent.com/troykinsella/mockleton/master/install.sh | bash \
  && cp /usr/local/bin/mockleton /usr/bin/docker \
