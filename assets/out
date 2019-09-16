@@ -152,7 +152,7 @@ up_command_options() {
 }
 
 service_arguments() {
-  local services=$(jq -r '.params.services | join(" ")' < $payload)
+  local services=$(jq -r '.params.services // [] | join(" ")' < $payload)
   echo $services
 }
 
@@ -218,6 +218,21 @@ validate_command() {
   esac
 }
 
+tlsverify() {
+  local tls=$(jq -r '.source.tlsverify // ""' < $payload)
+  [ -z "$tls" ] && return
+  local client_home="$HOME/.docker"
+  mkdir -p "$client_home"
+  
+  for key in ca cert key; do
+    local value=$(jq -r ".source.tlsverify.${key}" < $payload)
+    [ -z "$value" ] && echo "ERROR: 'source.tlsverify.$key' must be defined" && exit 1
+    echo "$value" > "${client_home}/${key}.pem"
+  done
+
+  echo -n "--tlsverify "
+}
+
 host=$(jq -r '.source.host // ""' < $payload)
 test -z "$host" && { echo '"source.host" must be defined' >&2; exit 1; }
 port=$(jq -r '.source.port // "2376"' < $payload)
@@ -258,8 +273,10 @@ if [ "$pull" == "true" ]; then
 fi
 
 docker-compose \
+  --no-ansi \
   --host $host:$port \
   -f $compose_file \
+  $(tlsverify) \
   $(verbose_option) \
   $(project_option) \
   $(command_arguments $command);
@@ -269,4 +286,8 @@ if [ -n "$wait_after" ]; then
   sleep $wait_after
 fi
 
-printf '{"version":{}}' >&3
+jq -n "{
+  version: {
+    digest: $((echo -n "sha256:"; sha256sum $compose_file) | cut -d ' ' -f1 | jq -R .)
+  }
+}" >&3
