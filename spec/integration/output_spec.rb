@@ -21,6 +21,6 @@ describe "integration:output" do
     stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
 
     expect(status.success?).to be true
-    expect(stdout).to eq("{\"version\":{}}")
+    expect(stdout).to eq("{\n  \"version\": {\n    \"digest\": \"sha256:\"\n  }\n}\n")
   end
 end
