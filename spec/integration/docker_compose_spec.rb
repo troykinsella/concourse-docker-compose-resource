@@ -31,6 +31,23 @@ describe "integration:docker-compose" do
                                                           ]
   end
 
+  it "exports docker host" do
+    stdin = {
+        "source" => {
+            "host" => "foo"
+        },
+    }.to_json
+
+    stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => stdin)
+
+    expect(status.success?).to be true
+
+    out = JSON.parse(File.read(mockelton_out))
+
+    expect(out["sequence"].size).to be 2
+    expect(out["sequence"][0]["exec-spec"]["env"]["DOCKER_HOST"]).to eq "foo:2376"
+  end
+
   it "fails with unsupported command" do
     stdin = {
         "source" => {
@@ -133,8 +150,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "down"
@@ -167,8 +182,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "down",
@@ -205,8 +218,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "down"
@@ -239,8 +250,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "kill"
@@ -270,8 +279,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "kill",
@@ -304,8 +311,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "kill",
@@ -339,8 +344,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "start"
@@ -371,8 +374,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "start",
@@ -407,8 +408,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "stop"
@@ -438,8 +437,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "stop",
@@ -472,8 +469,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "stop",
@@ -503,8 +498,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "up",
@@ -533,8 +526,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "wicked.yml",
                                                                 "up",
@@ -574,8 +565,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "up",
@@ -619,8 +608,6 @@ describe "integration:docker-compose" do
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
                                                                 "docker-compose",
                                                                 "--no-ansi",
-                                                                "--host",
-                                                                "foo:2376",
                                                                 "-f",
                                                                 "docker-compose.yml",
                                                                 "up",

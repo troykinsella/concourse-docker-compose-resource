@@ -3,6 +3,9 @@
 A Concourse CI resource that executes [`docker-compose`](https://docs.docker.com/compose/) 
 against a remote host.
 
+See [Docker Hub](https://cloud.docker.com/repository/docker/troykinsella/concourse-docker-compose-resource)
+for tagged image versions available.
+
 ## Resource Type Configuration
 
 ```bash
