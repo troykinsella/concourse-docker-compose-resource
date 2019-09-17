@@ -12,7 +12,7 @@ if [ -z "$source" ]; then
 fi
 
 payload=$(mktemp /tmp/artifactory-deb.XXXXXX)
-cat > $payload <&0
+cat > "$payload" <&0
 
 verbose_option() {
   local verbose=$(jq -r '.source.verbose // ""' < $payload)
@@ -153,19 +153,19 @@ up_command_options() {
 
 service_arguments() {
   local services=$(jq -r '.params.services // [] | join(" ")' < $payload)
-  echo $services
+  echo "$services"
 }
 
 log_into_registries() {
   local registries=$(jq -r '.source.registries // []' < $payload)
   IFS=$'\n'
   for entry in $(echo "$registries" | jq -rc '.[]'); do
-    local host=$(echo $entry | jq -r '.host // ""')
-    local username=$(echo $entry | jq -r '.username // ""')
-    local password=$(echo $entry | jq -r '.password // ""')
+    local host=$(echo "$entry" | jq -r '.host // ""')
+    local username=$(echo "$entry" | jq -r '.username // ""')
+    local password=$(echo "$entry" | jq -r '.password // ""')
 
     echo "Logging into registry: $host"
-    echo $password | docker login -u $username --password-stdin $host
+    echo "$password" | docker login -u "$username" --password-stdin "$host"
   done
   unset IFS
 }
@@ -173,13 +173,13 @@ log_into_registries() {
 # lifted from https://github.com/concourse/docker-image-resource/blob/master/assets/common.sh
 configure_ca_certs() {
   local raw_ca_certs=$(jq -r '.source.ca_certs // []' < $payload)
-  local cert_count="$(echo $raw_ca_certs | jq -r '. | length')"
+  local cert_count="$(echo "$raw_ca_certs" | jq -r '. | length')"
 
   for i in $(seq 0 $(expr "$cert_count" - 1));
   do
     local cert_dir="/etc/docker/certs.d/$(echo $raw_ca_certs | jq -r .[$i].domain)"
     mkdir -p "$cert_dir"
-    echo $raw_ca_certs | jq -r .[$i].cert >> "${cert_dir}/ca.crt"
+    echo "$raw_ca_certs" | jq -r ".[$i].cert" >> "${cert_dir}/ca.crt"
   done
 }
 
@@ -198,7 +198,7 @@ write_env_file() {
     done
     unset IFS
   elif [ -n "$env_file" ]; then
-    cp $source/$env_file .env
+    cp "$source/$env_file" .env
   fi
 }
 
@@ -236,6 +236,7 @@ tlsverify() {
 host=$(jq -r '.source.host // ""' < $payload)
 test -z "$host" && { echo '"source.host" must be defined' >&2; exit 1; }
 port=$(jq -r '.source.port // "2376"' < $payload)
+export DOCKER_HOST="${host}:${port}"
 
 compose_file=$(jq -r '.params.compose_file // "docker-compose.yml"' < $payload)
 path=$(jq -r '.params.path // "."' < $payload)
@@ -244,7 +245,7 @@ wait_before=$(jq -r '.params.wait_before // ""' < $payload)
 wait_after=$(jq -r '.params.wait_after // ""' < $payload)
 command=$(jq -r '.params.command // "up"' < $payload)
 pull=$(jq -r '.params.pull // "false"' < $payload)
-validate_command $command
+validate_command "$command"
 
 cd $source/$path
 
@@ -256,26 +257,24 @@ write_env_file
 
 if [ "$print" = "true" ]; then
   echo "${compose_file}:"
-  cat $compose_file
+  cat "$compose_file"
 fi
 
 if [ -n "$wait_before" ]; then
   echo "Waiting $wait_before seconds..."
-  sleep $wait_before
+  sleep "$wait_before"
 fi
 
 if [ "$pull" == "true" ]; then
   docker-compose \
-    --host $host:$port \
-    -f $compose_file \
+    -f "$compose_file" \
     pull \
     --include-deps
 fi
 
 docker-compose \
   --no-ansi \
-  --host $host:$port \
-  -f $compose_file \
+  -f "$compose_file" \
   $(tlsverify) \
   $(verbose_option) \
   $(project_option) \
@@ -283,11 +282,11 @@ docker-compose \
 
 if [ -n "$wait_after" ]; then
   echo "Waiting $wait_after seconds..."
-  sleep $wait_after
+  sleep "$wait_after"
 fi
 
 jq -n "{
   version: {
-    digest: $((echo -n "sha256:"; sha256sum $compose_file) | cut -d ' ' -f1 | jq -R .)
+    digest: $((echo -n "sha256:"; sha256sum "$compose_file") | cut -d ' ' -f1 | jq -R .)
   }
 }" >&3
