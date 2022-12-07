@@ -11,11 +11,11 @@ describe "integration:input" do
     File.delete mockelton_out if File.exists? mockelton_out
   end
 
-  it "requires params.host" do
+  it "requires a host" do
     stdout, stderr, status = Open3.capture3("#{out_file} .", :stdin_data => "{}")
 
     expect(status.success?).to be false
-    expect(stderr).to eq %("source.host" must be defined\n)
+    expect(stderr).to eq %(a docker host must be defined\n)
 
   end
 

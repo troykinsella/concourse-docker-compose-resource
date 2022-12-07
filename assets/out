@@ -233,8 +233,30 @@ tlsverify() {
   echo -n "--tlsverify "
 }
 
-host=$(jq -r '.source.host // ""' < $payload)
-test -z "$host" && { echo '"source.host" must be defined' >&2; exit 1; }
+resolve_docker_host() {
+  # Check host param
+  local host=$(jq -r '.params.host // ""' < $payload)
+  [[ -n $host ]] && { echo "$host"; return; }
+
+  # Check host_file param
+  local host_file=$(jq -r '.params.host_file // ""' < $payload)
+  if [[ -n $host_file ]]; then
+    # Extract host line from host file
+    local host_index=$(jq -r '.params.host_index // "1"' < $payload)
+    host=$(sed -n "${host_index}p" "$host_file")
+    [[ -n $host ]] && { echo "$host"; return; }
+  fi
+
+  # Check host source attribute
+  host=$(jq -r '.source.host // ""' < $payload)
+  [[ -n $host ]] && { echo "$host"; return; }
+
+  # Uh oh
+  echo 'a docker host must be defined' >&2
+  exit 1
+}
+
+host=$(resolve_docker_host)
 port=$(jq -r '.source.port // "2376"' < $payload)
 export DOCKER_HOST="${host}:${port}"
 

@@ -6,6 +6,17 @@ against a remote host.
 See [Docker Hub](https://cloud.docker.com/repository/docker/troykinsella/concourse-docker-compose-resource)
 for tagged image versions available.
 
+## Docker Host Resolution
+
+The host name of a remote docker host must be specified by the following configuration, 
+and there are several means of supplying this host name. 
+This is how a host name is resolved, whereby the first location to provide a host name is utilized:
+
+* Check `params.host` of the `put` step for a host name string
+* Check `params.host_file` of the `put` step for a path to a file containing host names
+  * Optionally, extract a line number from this file using `params.host_index`
+* Check `source.host` of the resource type `source` configuration
+
 ## Resource Type Configuration
 
 ```bash
@@ -31,7 +42,8 @@ resource_types:
 
   The domain should match the first component of repository, including the port. 
 
-* `host`: Required. The hostname of the Docker host to connect to.
+* `host`: Optional. The hostname of the Docker host to connect to.
+          Note: A host must be supplied either here or via `params.host` or `params.host_file`.
 * `port`: Optional. Default: 2376. The port on the Docker host to connect to.
 * `registries`: Optional. A list of objects having the following keys.
   Performs a `docker login` to the listed registries in order to pull images from
@@ -85,6 +97,12 @@ resources:
   `docker-compose` execution as environment variables.
 * `env_file`: Optional. Mutually exclusive with `env`. A path to a file containing environment variables 
   which will be made available to the `docker-compose` execution.
+* `host`: Optional. The hostname of the Docker host to connect to. Takes precedence over `source.host`.
+          Note: A host must be supplied either here or via `params.host_file` or `source.host`.
+* `host_file`: Optional. The path to a file containing the hostname of the Docker host to connect to.
+               This file may have multiple lines in it. See `host_index`.
+               Note: A host must be supplied either here or via `params.host` or `source.host`.
+* `host_index`: Optional. Default: `1`. The line number (starting at `1`) to extract from `host_file`, if supplied.
 * `options`: Optional. Supply command-specific options. Options names correlate to 
   `docker-compose` command options.
   * `down` options:
