@@ -271,7 +271,7 @@ validate_command "$command"
 
 cd $source/$path
 
-docker-compose -v
+docker compose -v
 
 configure_ca_certs
 log_into_registries
@@ -288,13 +288,13 @@ if [ -n "$wait_before" ]; then
 fi
 
 if [ "$pull" == "true" ]; then
-  docker-compose \
+  docker compose \
     -f "$compose_file" \
     pull \
     --include-deps
 fi
 
-docker-compose \
+docker compose \
   --no-ansi \
   -f "$compose_file" \
   $(tlsverify) \

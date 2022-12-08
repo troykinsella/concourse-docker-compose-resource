@@ -4,7 +4,7 @@ LABEL maintainer="Troy Kinsella <troy.kinsella@gmail.com>"
 RUN set -eux; \
     apk update; \
     apk upgrade; \
-    apk add bash jq; \
+    apk add bash ca-certificates jq; \
     rm -rf /var/cache/apk/*;
 
 COPY assets/* /opt/resource/
@@ -17,7 +17,7 @@ RUN set -eux; \
     gem install rspec; \
     wget -q -O - https://raw.githubusercontent.com/troykinsella/mockleton/master/install.sh | bash; \
     cp /usr/local/bin/mockleton /usr/bin/docker; \
-    cp /usr/local/bin/mockleton /usr/local/bin/docker-compose; \
+    cp /usr/local/bin/mockleton /usr/local/bin/docker; \
     rm -rf /var/cache/apk/*;
 
 COPY . /resource/
