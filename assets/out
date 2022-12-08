@@ -11,7 +11,7 @@ if [ -z "$source" ]; then
   exit 1
 fi
 
-payload=$(mktemp /tmp/artifactory-deb.XXXXXX)
+payload=$(mktemp /tmp/docker-compose.XXXXXX)
 cat > "$payload" <&0
 
 verbose_option() {
@@ -243,7 +243,7 @@ resolve_docker_host() {
   if [[ -n $host_file ]]; then
     # Extract host line from host file
     local host_index=$(jq -r '.params.host_index // "1"' < $payload)
-    host=$(sed -n "${host_index}p" "$host_file")
+    host=$(sed -n "${host_index}p" "$source/$host_file")
     [[ -n $host ]] && { echo "$host"; return; }
   fi
 
