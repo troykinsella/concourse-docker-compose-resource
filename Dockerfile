@@ -17,7 +17,7 @@ RUN set -eux; \
     gem install rspec; \
     wget -q -O - https://raw.githubusercontent.com/troykinsella/mockleton/master/install.sh | bash; \
     cp /usr/local/bin/mockleton /usr/bin/docker; \
-    cp /usr/local/bin/mockleton /usr/local/bin/docker; \
+    cp /usr/local/bin/mockleton /usr/local/bin/docker-compose; \
     rm -rf /var/cache/apk/*;
 
 COPY . /resource/

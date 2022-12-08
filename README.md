@@ -79,11 +79,11 @@ resources:
 
 ### `in`: No-Op
 
-### `out`: Execute `docker compose`
+### `out`: Execute `docker-compose`
 
 #### Parameters
 
-* `command`: Optional. Default: `up`. Specify the command to run with `docker compose`.
+* `command`: Optional. Default: `up`. Specify the command to run with `docker-compose`.
   Supported commands are:
   * `down`
   * `kill`
@@ -94,7 +94,7 @@ resources:
 * `compose_file`: Optional. Default: `docker-compose.yml`. Specify the name of the Compose file,
   relative to `path`.
 * `env`: Optional. Mutually exclusive with `env_file`. A map of key-value pairs which will be made available to the
-  `docker compose` execution as environment variables.
+  `docker-compose` execution as environment variables.
 * `env_file`: Optional. Mutually exclusive with `env`. A path to a file containing environment variables 
   which will be made available to the `docker-compose` execution.
 * `host`: Optional. The hostname of the Docker host to connect to. Takes precedence over `source.host`.
@@ -104,7 +104,7 @@ resources:
                Note: A host must be supplied either here or via `params.host` or `source.host`.
 * `host_index`: Optional. Default: `1`. The line number (starting at `1`) to extract from `host_file`, if supplied.
 * `options`: Optional. Supply command-specific options. Options names correlate to 
-  `docker compose` command options.
+  `docker-compose` command options.
   * `down` options:
     * `rmi`: String. Remove images. Type must be one of:
       * `all`: Remove all images used by any service.
@@ -142,14 +142,14 @@ resources:
          ```
      * `timeout`: Use this timeout in seconds for container shutdown when attached or when 
        containers are already running.
-* `path`: Optional. The directory in which `docker compose` will be executed.
+* `path`: Optional. The directory in which `docker-compose` will be executed.
 * `print`: Optional. Default: false. Print the contents of the Compose file.
 * `project`: Optional. Specify the project name, which is prepended to container names.
-* `pull`: Optional. Default: false. Run `docker compose pull` prior to executing the `command`.
+* `pull`: Optional. Default: false. Run `docker-compose pull` prior to executing the `command`.
 * `services`: Optional. Only relevant to the `kill`, `restart`, `start`, `stop`, and `up` commands. 
-  A list of services named in the Compose file on which `docker compose` will operate.
-* `wait_before`: Optional. The number of seconds to wait (sleep) before executing `docker compose`.
-* `wait_after`: Optional. The number of seconds to wait (sleep) after executing `docker compose`.
+  A list of services named in the Compose file on which `docker-compose` will operate.
+* `wait_before`: Optional. The number of seconds to wait (sleep) before executing `docker-compose`.
+* `wait_after`: Optional. The number of seconds to wait (sleep) after executing `docker-compose`.
 
 #### Example
 

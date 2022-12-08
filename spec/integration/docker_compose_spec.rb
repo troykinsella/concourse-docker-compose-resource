@@ -26,8 +26,7 @@ describe "integration:docker-compose" do
 
     expect(out["sequence"].size).to be 2
     expect(out["sequence"][0]["exec-spec"]["args"]).to eq [
-                                                              "docker",
-                                                              "compose",
+                                                              "docker-compose",
                                                               "-v"
                                                           ]
   end
@@ -149,8 +148,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -182,8 +180,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -219,8 +216,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -252,8 +248,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -282,8 +277,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -315,8 +309,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -349,8 +342,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -380,8 +372,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -415,8 +406,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -445,8 +435,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -478,8 +467,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -508,8 +496,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -537,8 +524,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "wicked.yml",
@@ -577,8 +563,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
@@ -621,8 +606,7 @@ describe "integration:docker-compose" do
 
       expect(out["sequence"].size).to be 2
       expect(out["sequence"][1]["exec-spec"]["args"]).to eq [
-                                                                "docker",
-                                                                "compose",
+                                                                "docker-compose",
                                                                 "--no-ansi",
                                                                 "-f",
                                                                 "docker-compose.yml",
